@@ -3,13 +3,13 @@ import ScrollToBottom from "react-scroll-to-bottom"
 
 import './Chat.css'
 
-function Chat({socket, name, hash}) {
+function Chat({socket, name, hash, isAdmin}) {
 
     const [hashInitials, SetHashInitials] = useState(hash.substr(0,5) + "...")
     const [displayButton, SetDisplayButton] = useState('more')
     const [currentMessage, setCurrentMessage] = useState('')
     const [messageList, setMessageList] = useState([])
-    const [yourID, setYourID] = useState()
+    const [yourID, setYourID] = useState() //socket.id
     const [userCount, SetUserCount] = useState(0)
 
     useEffect(() => {
@@ -101,6 +101,7 @@ function Chat({socket, name, hash}) {
 
     return(
         <div>
+          you are {isAdmin ? "admin" : "user"}
             <div>
                 <h3>
                     ROOM ID (CONFIDENTIAL)
