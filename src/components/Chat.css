@@ -52,9 +52,9 @@ body {
 
 .chat-window {
   width: 90vw; /* 90% of the viewport width */
-  height: 50vh; /* 50% of the viewport height */
+  height: 45vh; /* 50% of the viewport height */
   max-width: 1280px; /* Maximum width for larger screens */
-  max-height: 600px; /* Maximum height for larger screens */
+  max-height: 700px; /* Maximum height for larger screens */
 }
 
 .chat-window p {
@@ -102,7 +102,7 @@ body {
   width: auto;
   height: auto;
   min-height: 40px;
-  max-width: 120px;
+  max-width: 30%;
   /* background-color: #81e286; */
   border-radius: 5px;
   color: white;

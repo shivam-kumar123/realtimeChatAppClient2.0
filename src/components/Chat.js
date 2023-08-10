@@ -5,13 +5,18 @@ import './Chat.css'
 
 function Chat({socket, name, hash, isAdmin}) {
 
-    const [hashInitials, SetHashInitials] = useState(hash.substr(0,5) + "...")
+    const [aboutHash, SetAboutHash] = useState("Hash is your top secret...")
     const [displayButton, SetDisplayButton] = useState('more')
     const [currentMessage, setCurrentMessage] = useState('')
     const [messageList, setMessageList] = useState([])
     const [yourID, setYourID] = useState() //socket.id
     const [userCount, SetUserCount] = useState(0)
     const [roomPeopleNames, SetRoomPeopleNames] = useState([])
+
+    const copyHashToClipboard = () => {
+      // Use the Clipboard API to copy the hash value to the clipboard
+      navigator.clipboard.writeText(hash);
+    };
 
     useEffect(() => {
 
@@ -35,7 +40,7 @@ function Chat({socket, name, hash, isAdmin}) {
                 message.time === data.time
               );
             });
-      
+            
             // Add the message to the messageList only if it doesn't already exist
             if (!messageExists) {
               return [...list, data];
@@ -52,14 +57,14 @@ function Chat({socket, name, hash, isAdmin}) {
         }
     
       }, [socket]);
-
-    const HandleHashInitials = () => {
-        if(hash === hashInitials){
-            SetHashInitials(hash.substr(0,5) + "...")
-            SetDisplayButton('more')
+      
+    const HandleAboutHash = () => {
+        if(aboutHash === "Hash is your top secret..."){
+          SetAboutHash("Hash is your top secret, share it with people you know to connect with them, its a super secure key , you can chat with friends only if you both are on same hash")
+          SetDisplayButton('less')
         } else {
-            SetHashInitials(hash)
-            SetDisplayButton('less')
+          SetAboutHash(aboutHash.substr(0,23) + "...")
+          SetDisplayButton('more')
         }
     }
 
@@ -109,18 +114,21 @@ function Chat({socket, name, hash, isAdmin}) {
           {name} {isAdmin ? "an admin" : "a user"}
             <div>
                 <h5>
-                    ROOM ID (CONFIDENTIAL)
+                    ROOM ID / Hash (CONFIDENTIAL)
                     <div />
                     <span>
-                        {hashInitials}
+                        {aboutHash}
                     </span>
                 </h5>
             <button 
-                onClick={HandleHashInitials}
+                onClick={HandleAboutHash}
                 className="copy-button"
             >
                 Read {displayButton}
             </button>
+          <button onClick={copyHashToClipboard} className="copy-button">
+            Copy Hash
+          </button>
         </div>
         {
           isAdmin && 

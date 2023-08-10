@@ -140,7 +140,7 @@ function Login() {
                                 <input
                                     type="number"
                                     // value={roomLimit}
-                                    placeholder="Max People in room"
+                                    placeholder="Max People in room [2, 100]"
                                     required
                                     onChange={handleRoomLimitChange}
                                 />
