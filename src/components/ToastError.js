@@ -1,12 +1,12 @@
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-function ToastError({ message }) {
+function ToastError({ message, time }) {
     // Show a toast notification when this component renders
 
     toast.error(message, {
         position: "top-right",
-        autoClose: 3000,
+        autoClose: {time},
         hideProgressBar: true,
         closeOnClick: true,
         pauseOnHover: false,

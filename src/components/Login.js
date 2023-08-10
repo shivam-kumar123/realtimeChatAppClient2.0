@@ -23,7 +23,7 @@ function Login() {
     const [showHashError, SetShowHashError] = useState(false);
     const [showRoomLimitError, SetShowRoomLimitError] = useState(false);
     const [showCopyHashSuccess, SetShowCopyHashSuccess] = useState(false);
-    const [ShivamMsg, SetShivamMsg] = useState(true)
+    const [shivamMsg, SetShivamMsg] = useState(true)
 
     useEffect(() => {
         SetShowHashError(false)
@@ -72,7 +72,10 @@ function Login() {
         } else {
             SetRoomLimit('-1');
             SetShowRoomLimitError(true);
-            <ToastError message="Please enter a number between 2 and 100" />
+            <ToastError 
+                message="Please enter a number between 2 and 100" 
+                time={3000}
+                />
             console.log("Please enter a number between 2 and 100.");
         }
     };
@@ -99,17 +102,36 @@ function Login() {
     };
 
     const HandleSetHash = (e) => {
-        SetHash(e.target.value)
-        setIsAdmin(false)
+        e.preventDefault();
+        // Process the pasted text and set it in the state
+        const pastedText = (e.clipboardData || window.clipboardData).getData('Text');
+        SetHash(pastedText);
+        // SetHash(e.target.value)
+        // setIsAdmin(false)
     }
 
+    const HandleKeyPress = (e) => {
+        e.preventDefault()
+    }
+
+    useEffect(() => {
+        SetShivamMsg(false)
+    },[shivamMsg])
+
     return (
-            <div>
+        <div>
                 {
-                    ShivamMsg && 
+                    !showChat &&
+                    <div>
+                        <h1>Chat App</h1>
+                    </div>
+                }
+                <ToastContainer />
+                {
+                    shivamMsg && 
                     toast.error("!!! IMPORTANT !!!", {
                         position: "top-center",
-                        autoClose: 30000,
+                        autoClose: 10000,
                         hideProgressBar: false,
                         closeOnClick: true,
                         pauseOnHover: true,
@@ -118,37 +140,40 @@ function Login() {
                         theme: "light",
                         })
                     &&
-                    toast.info("Either Generate a Token or Copy Paste Someone's Generated Token ONLY.", {
+                    toast.info("In Security Token field Either Generate a Token or Copy Paste Someone's Generated Token ONLY.", {
                         position: "top-center",
-                        autoClose: 30000,
+                        autoClose: 60000,
                         hideProgressBar: false,
-                        closeOnClick: true,
-                        pauseOnHover: true,
+                        closeOnClick: false,
+                        pauseOnHover: false,
                         draggable: true,
                         progress: undefined,
                         theme: "light",
                         })
                 }
                 {console.log(`return of login called`)}
-                <ToastContainer />
                 {showUsernameError && (
                 <ToastError 
                     message="Please enter a Username" 
+                    time={3000}
                     />
                 )}
                 {showHashError && (
                     <ToastError 
-                        message="Please Generate a Hash" 
+                        message="Please Generate a Token" 
+                        time={3000}
                         />
                 )}
                 {showRoomLimitError && (
                     <ToastError 
                         message="Please enter a number between 2 and 100" 
-                        />
+                        time={3000}
+                    />
                 )}
                 {showCopyHashSuccess && (
                     <ToastSuccess
-                        message="make sure to copy the hash" 
+                        message="make sure to copy the token" 
+                        time={3000}
                     />
                 )}
                 { 
@@ -182,13 +207,15 @@ function Login() {
                                 id="hash-input"
                                 value={hash}
                                 placeholder="Security Token (CONFIDENTIAL)"
-                                onChange={HandleSetHash}
+                                onInput={HandleSetHash}
+                                onKeyPress={HandleKeyPress}
+                                // onChange={HandleSetHash}
                                 required
                             />
                             {
                                 showCopy && 
                                 <button onClick={copyHash} className="copy-button">
-                                    Copy Hash<FaCopy /> {/* Copy icon */}
+                                    Copy Token<FaCopy /> {/* Copy icon */}
                                 </button>
                             }
                         </div>
@@ -201,6 +228,10 @@ function Login() {
                             </button>
                         </center>
                     </form>
+                    <h4>
+                        Made with Love by Shivam Kumar
+                        <div>Epitome of Secure Chat Application :)</div>
+                    </h4>
                 </div>
             }
             {
