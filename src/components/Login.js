@@ -9,8 +9,8 @@ import ToastError from './ToastError'
 import ToastSuccess from './ToastSuccess'
 import './Login.css';
 
-const socket = io.connect("https://chatappserver2-0.onrender.com");
-// const socket = io.connect("http://localhost:3001");
+// const socket = io.connect("https://chatappserver2-0.onrender.com");
+const socket = io.connect("http://localhost:3001");
 
 function Login() {
     const [name, SetName] = useState(''); // Username 
@@ -76,7 +76,6 @@ function Login() {
                 message="Please enter a number between 2 and 100" 
                 time={3000}
                 />
-            console.log("Please enter a number between 2 and 100.");
         }
     };
 
@@ -132,7 +131,6 @@ function Login() {
                         theme: "light",
                         })
                 }
-                {console.log(`return of login called`)}
                 {showUsernameError && (
                 <ToastError 
                     message="Please enter a Username" 

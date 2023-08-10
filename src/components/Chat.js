@@ -12,14 +12,61 @@ function Chat({socket, name, hash, isAdmin}) {
     const [yourID, setYourID] = useState() //socket.id
     const [userCount, SetUserCount] = useState(0)
     const [roomPeopleNames, SetRoomPeopleNames] = useState([])
+    const [selectedFile, SetSelectedFile] = useState(null);
+
+ // Function to handle file selection
+ const handleFileSelect = (e) => {
+  console.log(`file selected from ui`)
+  SetSelectedFile(e.target.files[0]);
+};
+
+// Function to send the selected file to the server
+const sendFile = async (e) => {
+  e.preventDefault();
+  console.log(`trying to send file to server , still in client`)
+  if (selectedFile) {
+    console.log(`file might eject to server: ${selectedFile}`)
+    const fileReader = new FileReader();
+    fileReader.onload = (e) => {
+      const fileData = e.target.result;
+      console.log(`file ejected to server: ${fileData}`)
+      socket.emit("file:data", { to: hash, data: fileData });
+    };
+    fileReader.readAsArrayBuffer(selectedFile);
+
+    // Clear the selected file
+    SetSelectedFile(null);
+  } else {
+    console.log("No file selected.");
+  }
+};
 
     const copyHashToClipboard = () => {
       // Use the Clipboard API to copy the hash value to the clipboard
       navigator.clipboard.writeText(hash);
     };
 
+    
     useEffect(() => {
+      socket.on("file:data", (data) => {
+        console.log("Received file data from:", data.from);
+        
+        // Handle the received file data here
+        // For example, you can create a Blob and provide a download link
+        const blob = new Blob([data.data]);
+        const downloadLink = document.createElement("a");
+        downloadLink.href = URL.createObjectURL(blob);
+        downloadLink.download = "received_file";
+        downloadLink.click();
+      });
+      return () => {
+        // Clean up the event listener when the component unmounts
+        socket.off("file:data");
+      };
+    }, [socket])
 
+    useEffect(() => {
+    
       socket.on("room_names", (name) => {
           SetRoomPeopleNames([name]) //sending all names of people in room
       })
@@ -89,7 +136,7 @@ function Chat({socket, name, hash, isAdmin}) {
   };
 
   const renderMessages = (currentMessage, index)=> {
-    console.log(`currentMessage.body = ${currentMessage.body} and socket.id = ${socket.id}`)
+    console.log(`currentMessage.body = ${currentMessage.message} and socket.id = ${socket.id}`)
     return (
       <div
         key={index}
@@ -140,9 +187,6 @@ function Chat({socket, name, hash, isAdmin}) {
           </div>
         }
         <div className="chat-window">
-            {/* <div className="chat-header">
-                <p>Live Chat - {userCount}</p>
-            </div> */}
             <div className="chat-body">
                 <ScrollToBottom className="message-container">
                 {messageList.map(renderMessages)}
@@ -164,6 +208,10 @@ function Chat({socket, name, hash, isAdmin}) {
                     &#9658;
                 </button>
                 </div>
+                <span>
+                  <input type="file" onChange={handleFileSelect} />
+                  <button onClick={sendFile}>Send File</button>
+                </span>
             </form>
             </div>
         </div>
