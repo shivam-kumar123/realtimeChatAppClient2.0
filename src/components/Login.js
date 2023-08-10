@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ToastContainer} from 'react-toastify';
+import { ToastContainer, toast} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import io from "socket.io-client";
 import { FaCopy } from 'react-icons/fa';
@@ -23,6 +23,7 @@ function Login() {
     const [showHashError, SetShowHashError] = useState(false);
     const [showRoomLimitError, SetShowRoomLimitError] = useState(false);
     const [showCopyHashSuccess, SetShowCopyHashSuccess] = useState(false);
+    const [ShivamMsg, SetShivamMsg] = useState(true)
 
     useEffect(() => {
         SetShowHashError(false)
@@ -104,6 +105,30 @@ function Login() {
 
     return (
             <div>
+                {
+                    ShivamMsg && 
+                    toast.error("!!! IMPORTANT !!!", {
+                        position: "top-center",
+                        autoClose: 30000,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        progress: undefined,
+                        theme: "light",
+                        })
+                    &&
+                    toast.info("Either Generate a Token or Copy Paste Someone's Generated Token ONLY.", {
+                        position: "top-center",
+                        autoClose: 30000,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        progress: undefined,
+                        theme: "light",
+                        })
+                }
                 {console.log(`return of login called`)}
                 <ToastContainer />
                 {showUsernameError && (
@@ -169,7 +194,7 @@ function Login() {
                         </div>
                         <center>
                             <button onClick={handleHash}>
-                                Generate Hash
+                                Generate Token
                             </button>
                             <button onClick={joinRoom}>
                                 Chat
