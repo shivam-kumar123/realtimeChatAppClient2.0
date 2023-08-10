@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import io from "socket.io-client";
 import { FaCopy } from 'react-icons/fa';
 
@@ -9,21 +11,41 @@ import './Login.css';
 const socket = io.connect("http://localhost:3001");
 
 function Login() {
-    const [name, setName] = useState(''); // Username 
-    const [hash, setHash] = useState(''); // Room id used in socket.io
+    const [name, SetName] = useState(''); // Username 
+    const [hash, SetHash] = useState(''); // Room id used in socket.io
     const [showCopy, SetShowCopy] = useState(false) // showing copy button 
     const [showChat, SetShowChat] = useState(false) // showing chats
     const [isAdmin, setIsAdmin] = useState(false); // Track admin status
-    const [roomLimit, SetRoomLimit] = useState(0)
+    const [roomLimit, SetRoomLimit] = useState('0')
 
     // helps to join the room using socket.io by emitting our unique hash
     const joinRoom = (e) => {
         e.preventDefault()
-        if (name !== "" && hash !== "") {
+        const limit = parseInt(roomLimit);
+        if (name !== "" && hash !== "" && limit >= 2 && limit <= 100) {
           socket.emit("join_room", hash, name);
           SetShowChat(true);
         }
       };
+
+
+      const handleRoomLimitChange = (e) => {
+        const inputValue = parseInt(e.target.value);
+        if (inputValue >= 2 && inputValue <= 100) {
+            SetRoomLimit(inputValue);
+        } else {
+            SetRoomLimit('0')
+            toast.error("Please enter a number between 2 and 100.", {
+                position: "top-right",
+                autoClose: 3000, // Close the toast after 3 seconds
+                hideProgressBar: true,
+                closeOnClick: true,
+                pauseOnHover: false,
+                draggable: true,
+            });
+            console.log("Please enter a number between 2 and 100.");
+        }
+    };
 
     // creates hash and sets it 
     const handleHash = (e) => {
@@ -32,7 +54,7 @@ function Login() {
             length: 100,
             charset: 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890`~!@#$%^&*()-=_+{}[]:;",<.>?/|',
         });
-        setHash(str);
+        SetHash(str);
         SetShowCopy(true) 
         setIsAdmin(true) // Set admin status
     };
@@ -47,6 +69,7 @@ function Login() {
 
     return (
             <div>
+                <ToastContainer />
             { 
                 !showChat &&
                 <div className="login-box">
@@ -57,16 +80,16 @@ function Login() {
                                 value={name}
                                 placeholder="Username"
                                 required
-                                onChange={(e) => setName(e.target.value)}
+                                onChange={(e) => SetName(e.target.value)}
                             />
                         </div>
                         <div className="user-box">
                             <input
                                 type="number"
-                                value={name}
-                                placeholder="Username"
+                                // value={roomLimit}
+                                placeholder="Max People in room"
                                 required
-                                onChange={(e) => setName(e.target.value)}
+                                onChange={handleRoomLimitChange}
                             />
                         </div>
                         <div className="user-box">
@@ -75,7 +98,7 @@ function Login() {
                                 id="hash-input"
                                 value={hash}
                                 placeholder="Security Token (CONFIDENTIAL)"
-                                onChange={(e) => setHash(e.target.value)}
+                                onChange={(e) => SetHash(e.target.value)}
                                 required
                             />
                             {
