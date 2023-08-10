@@ -204,4 +204,8 @@ body {
   .chat-window .chat-body .message .message-content {
     max-width: 100%; /* Take up full width on mobile */
   }
+  h1{
+    margin-top: 0px;
+    margin-bottom: 370%;
+  }
 }
