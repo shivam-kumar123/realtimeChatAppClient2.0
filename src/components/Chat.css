@@ -202,6 +202,6 @@ body {
 
   /* Make the chat message content take up more width on smaller screens */
   .chat-window .chat-body .message .message-content {
-    max-width: 60%; /* Take up full width on mobile */
+    max-width: 100%; /* Take up full width on mobile */
   }
 }
