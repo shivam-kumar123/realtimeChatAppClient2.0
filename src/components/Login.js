@@ -5,6 +5,7 @@ import { FaCopy } from 'react-icons/fa';
 import Chat from './Chat'
 import './Login.css';
 
+// const socket = io.connect("https://chatapp2-0.onrender.com");
 const socket = io.connect("http://localhost:3001");
 
 function Login() {
@@ -13,12 +14,13 @@ function Login() {
     const [showCopy, SetShowCopy] = useState(false) // showing copy button 
     const [showChat, SetShowChat] = useState(false) // showing chats
     const [isAdmin, setIsAdmin] = useState(false); // Track admin status
+    const [roomLimit, SetRoomLimit] = useState(0)
 
     // helps to join the room using socket.io by emitting our unique hash
     const joinRoom = (e) => {
         e.preventDefault()
         if (name !== "" && hash !== "") {
-          socket.emit("join_room", hash);
+          socket.emit("join_room", hash, name);
           SetShowChat(true);
         }
       };
@@ -52,6 +54,15 @@ function Login() {
                         <div className="user-box">
                             <input
                                 type="text"
+                                value={name}
+                                placeholder="Username"
+                                required
+                                onChange={(e) => setName(e.target.value)}
+                            />
+                        </div>
+                        <div className="user-box">
+                            <input
+                                type="number"
                                 value={name}
                                 placeholder="Username"
                                 required

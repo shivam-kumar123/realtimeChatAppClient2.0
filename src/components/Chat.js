@@ -11,8 +11,13 @@ function Chat({socket, name, hash, isAdmin}) {
     const [messageList, setMessageList] = useState([])
     const [yourID, setYourID] = useState() //socket.id
     const [userCount, SetUserCount] = useState(0)
+    const [roomPeopleNames, SetRoomPeopleNames] = useState([])
 
     useEffect(() => {
+
+      socket.on("room_names", (name) => {
+          SetRoomPeopleNames([name]) //sending all names of people in room
+      })
 
         socket.on("room_count", (count) => {
             console.log(`count is: ${count}`)
@@ -101,15 +106,15 @@ function Chat({socket, name, hash, isAdmin}) {
 
     return(
         <div>
-          you are {isAdmin ? "admin" : "user"}
+          {name} {isAdmin ? "an admin" : "a user"}
             <div>
-                <h3>
+                <h5>
                     ROOM ID (CONFIDENTIAL)
                     <div />
-                    <div>
+                    <span>
                         {hashInitials}
-                    </div>
-                </h3>
+                    </span>
+                </h5>
             <button 
                 onClick={HandleHashInitials}
                 className="copy-button"
@@ -117,10 +122,19 @@ function Chat({socket, name, hash, isAdmin}) {
                 Read {displayButton}
             </button>
         </div>
+        {
+          isAdmin && 
+          <div>
+            <span>People in Room ({userCount}) : </span>
+                {roomPeopleNames.map((name, index) => (
+                    <span key={index}>{`${name} `}</span>
+                ))}
+          </div>
+        }
         <div className="chat-window">
-            <div className="chat-header">
+            {/* <div className="chat-header">
                 <p>Live Chat - {userCount}</p>
-            </div>
+            </div> */}
             <div className="chat-body">
                 <ScrollToBottom className="message-container">
                 {messageList.map(renderMessages)}
