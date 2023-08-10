@@ -52,10 +52,13 @@ function Login() {
             SetShowUsernameError(true);
         } if (hash === "") {
             SetShowHashError(true);
-        } if (limit < 2 || limit > 100) {
+        } if (isAdmin && (limit < 2 || limit > 100)) {
             SetShowRoomLimitError(true);
-        } if((name !== "" && hash !== "" && limit >= 2 && limit <= 100)) {
-            socket.emit("join_room", hash, name);
+        } if(isAdmin && (name !== "" && hash !== "" && limit >= 2 && limit <= 100)) {
+            socket.emit("join_room_admin", hash, name, limit);
+            SetShowChat(true);
+        } else if((name !== "" && hash !== "")){
+            socket.emit("join_room_user", hash, name);
             SetShowChat(true);
         }
       };
@@ -131,15 +134,18 @@ function Login() {
                                 onChange={(e) => SetName(e.target.value)}
                             />
                         </div>
-                        <div className="user-box">
-                            <input
-                                type="number"
-                                // value={roomLimit}
-                                placeholder="Max People in room"
-                                required
-                                onChange={handleRoomLimitChange}
-                            />
-                        </div>
+                        { 
+                            isAdmin && 
+                            <div className="user-box">
+                                <input
+                                    type="number"
+                                    // value={roomLimit}
+                                    placeholder="Max People in room"
+                                    required
+                                    onChange={handleRoomLimitChange}
+                                />
+                            </div>
+                        }
                         <div className="user-box">
                             <input
                                 type="text"
