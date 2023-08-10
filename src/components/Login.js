@@ -57,7 +57,7 @@ function Login() {
         } if(isAdmin && (name !== "" && hash !== "" && limit >= 2 && limit <= 100)) {
             socket.emit("join_room_admin", hash, name, limit);
             SetShowChat(true);
-        } else if((name !== "" && hash !== "")){
+        } else if(!isAdmin && (name !== "" && hash !== "")){
             socket.emit("join_room_user", hash, name);
             SetShowChat(true);
         }
@@ -96,6 +96,11 @@ function Login() {
         copyText.select();
         document.execCommand('copy');
     };
+
+    const HandleSetHash = (e) => {
+        SetHash(e.target.value)
+        setIsAdmin(false)
+    }
 
     return (
             <div>
@@ -152,7 +157,7 @@ function Login() {
                                 id="hash-input"
                                 value={hash}
                                 placeholder="Security Token (CONFIDENTIAL)"
-                                onChange={(e) => SetHash(e.target.value)}
+                                onChange={HandleSetHash}
                                 required
                             />
                             {

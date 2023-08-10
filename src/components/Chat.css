@@ -102,7 +102,7 @@ body {
   width: auto;
   height: auto;
   min-height: 40px;
-  max-width: 30%;
+  max-width: 100%;
   /* background-color: #81e286; */
   border-radius: 5px;
   color: white;
