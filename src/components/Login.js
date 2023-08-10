@@ -129,17 +129,6 @@ function Login() {
                 <ToastContainer />
                 {
                     shivamMsg && 
-                    toast.error("!!! IMPORTANT !!!", {
-                        position: "top-center",
-                        autoClose: 10000,
-                        hideProgressBar: false,
-                        closeOnClick: true,
-                        pauseOnHover: true,
-                        draggable: true,
-                        progress: undefined,
-                        theme: "light",
-                        })
-                    &&
                     toast.info("In Security Token field Either Generate a Token or Copy Paste Someone's Generated Token ONLY.", {
                         position: "top-center",
                         autoClose: 60000,
