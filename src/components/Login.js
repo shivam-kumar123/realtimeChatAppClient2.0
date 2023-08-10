@@ -9,8 +9,8 @@ import ToastError from './ToastError'
 import ToastSuccess from './ToastSuccess'
 import './Login.css';
 
-// const socket = io.connect("https://chatappserver2-0.onrender.com");
-const socket = io.connect("http://localhost:3001");
+const socket = io.connect("https://chatappserver2-0.onrender.com");
+// const socket = io.connect("http://localhost:3001");
 
 function Login() {
     const [name, SetName] = useState(''); // Username 
