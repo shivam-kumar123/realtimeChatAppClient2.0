@@ -101,17 +101,9 @@ function Login() {
         document.execCommand('copy');
     };
 
-    const HandleSetHash = (e) => {
-        e.preventDefault();
-        // Process the pasted text and set it in the state
-        const pastedText = (e.clipboardData || window.clipboardData).getData('Text');
-        SetHash(pastedText);
-        // SetHash(e.target.value)
-        // setIsAdmin(false)
-    }
-
-    const HandleKeyPress = (e) => {
-        e.preventDefault()
+    const HandleTokenChange = (e) => {
+        SetHash(e.target.value);
+        setIsAdmin(false)
     }
 
     useEffect(() => {
@@ -196,8 +188,7 @@ function Login() {
                                 id="hash-input"
                                 value={hash}
                                 placeholder="Security Token (CONFIDENTIAL)"
-                                onInput={HandleSetHash}
-                                onKeyPress={HandleKeyPress}
+                                onChange={HandleTokenChange}
                                 // onChange={HandleSetHash}
                                 required
                             />
