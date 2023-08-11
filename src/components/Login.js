@@ -9,8 +9,8 @@ import ToastError from './ToastError'
 import ToastSuccess from './ToastSuccess'
 import './Login.css';
 
-const socket = io.connect("https://chatappserver2-0.onrender.com");
-// const socket = io.connect("http://localhost:3001");
+// const socket = io.connect("https://chatappserver2-0.onrender.com");
+const socket = io.connect("http://localhost:3001");
 
 function Login() {
     const [name, SetName] = useState(''); // Username 
@@ -24,6 +24,7 @@ function Login() {
     const [showRoomLimitError, SetShowRoomLimitError] = useState(false);
     const [showCopyHashSuccess, SetShowCopyHashSuccess] = useState(false);
     const [shivamMsg, SetShivamMsg] = useState(true)
+    const [mapIDName, SetMapIDName] = useState({})
 
     useEffect(() => {
         SetShowHashError(false)
@@ -56,9 +57,13 @@ function Login() {
         } if (isAdmin && (limit < 2 || limit > 100)) {
             SetShowRoomLimitError(true);
         } if(isAdmin && (name !== "" && hash !== "" && limit >= 2 && limit <= 100)) {
+            console.log(`socket.id as an admin: ${socket.id}`)
+            mapIDName[socket.id] = name
             socket.emit("join_room_admin", hash, name, limit);
             SetShowChat(true);
         } else if(!isAdmin && (name !== "" && hash !== "")){
+            console.log(`socket.id as a user: ${socket.id}`)
+            mapIDName[socket.id] = name
             socket.emit("join_room_user", hash, name);
             SetShowChat(true);
         }
@@ -122,7 +127,7 @@ function Login() {
                     shivamMsg && 
                     toast.info("In Security Token field Either Generate a Token or Copy Paste Someone's Generated Token ONLY.", {
                         position: "top-center",
-                        autoClose: 60000,
+                        autoClose: 7000,
                         hideProgressBar: false,
                         closeOnClick: false,
                         pauseOnHover: true,
@@ -219,6 +224,8 @@ function Login() {
                     name={name}
                     hash={hash}
                     isAdmin={isAdmin}
+                    SetMapIDName={SetMapIDName}
+                    mapIDName={mapIDName}
                 />
             }
         </div>
