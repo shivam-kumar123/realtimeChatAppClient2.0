@@ -13,6 +13,7 @@ function Chat({socket, name, hash, isAdmin}) {
     const [userCount, SetUserCount] = useState(0)
     const [roomPeopleNames, SetRoomPeopleNames] = useState([])
     const [selectedFile, SetSelectedFile] = useState(null);
+    const [receivedFiles, setReceivedFiles] = useState([]);
 
  // Function to handle file selection
  const handleFileSelect = (e) => {
@@ -41,29 +42,35 @@ const sendFile = async (e) => {
   }
 };
 
+    // Function to handle the received file
+    const handleReceivedFileClick = (fileData) => {
+      // Create a Blob and provide a download link
+      const blob = new Blob([fileData.data]);
+      const downloadLink = document.createElement("a");
+      downloadLink.href = URL.createObjectURL(blob);
+      downloadLink.download = "received_file";
+      downloadLink.click();
+    };
+
     const copyHashToClipboard = () => {
       // Use the Clipboard API to copy the hash value to the clipboard
       navigator.clipboard.writeText(hash);
     };
 
-    
-    useEffect(() => {
-      socket.on("file:data", (data) => {
-        console.log("Received file data from:", data.from);
-        
-        // Handle the received file data here
-        // For example, you can create a Blob and provide a download link
-        const blob = new Blob([data.data]);
-        const downloadLink = document.createElement("a");
-        downloadLink.href = URL.createObjectURL(blob);
-        downloadLink.download = "received_file";
-        downloadLink.click();
-      });
-      return () => {
-        // Clean up the event listener when the component unmounts
-        socket.off("file:data");
-      };
-    }, [socket])
+    // Event listener for receiving file data
+  useEffect(() => {
+    socket.on("file:data", (data) => {
+      console.log("Received file data from:", data.from);
+
+      // Update the list of received files
+      setReceivedFiles((prevFiles) => [...prevFiles, data]);
+    });
+
+    return () => {
+      // Clean up the event listener when the component unmounts
+      socket.off("file:data");
+    };
+  }, [socket]);
 
     useEffect(() => {
     
@@ -190,6 +197,14 @@ const sendFile = async (e) => {
             <div className="chat-body">
                 <ScrollToBottom className="message-container">
                 {messageList.map(renderMessages)}
+                {receivedFiles.map((fileData, index) => (
+                  <div key={index}>
+                    <p>Received File</p>
+                    <button onClick={() => handleReceivedFileClick(fileData)}>
+                      Download
+                    </button>
+                  </div>
+                ))}
                 </ScrollToBottom>
             </div>
             <form onSubmit={sendMessage}>
@@ -212,6 +227,13 @@ const sendFile = async (e) => {
                   <input type="file" onChange={handleFileSelect} />
                   <button onClick={sendFile}>Send File</button>
                 </span>
+                {/* <div>
+                <input type="file" onChange={handleFileSelect} />
+                <button onClick={sendFile}>Send File</button>
+              </div> */}
+              <div>
+                {/* Display received files */}
+              </div>
             </form>
             </div>
         </div>
