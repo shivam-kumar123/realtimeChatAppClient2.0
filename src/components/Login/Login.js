@@ -3,67 +3,58 @@ import { ToastContainer, toast} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import io from "socket.io-client";
 import { FaCopy } from 'react-icons/fa';
-
-import Chat from './Chat'
-import ToastError from './ToastError'
-import ToastSuccess from './ToastSuccess'
+import Chat from '../Chat/Chat.js';
+import ToastError from '../Toaster/ToastError.js';
+import ToastSuccess from '../Toaster/ToastSuccess.js';
 import './Login.css';
 
-// const socket = io.connect("https://chatappserver2-0.onrender.com");
-const socket = io.connect("http://localhost:3001");
+const socket = io.connect(process.env.REACT_APP_HOSTED_SERVER);
 
 function Login() {
     const [name, SetName] = useState(''); // Username 
     const [hash, SetHash] = useState(''); // Room id used in socket.io
-    const [showCopy, SetShowCopy] = useState(false) // showing copy button 
-    const [showChat, SetShowChat] = useState(false) // showing chats
-    const [isAdmin, setIsAdmin] = useState(false); // Track admin status
-    const [roomLimit, SetRoomLimit] = useState('0')
+    const [showCopy, SetShowCopy] = useState(false); // showing copy button 
+    const [showChat, SetShowChat] = useState(false); // showing chats of room user wants to join
+    const [isAdmin, SetIsAdmin] = useState(false); // Track admin status
+    const [roomLimit, SetRoomLimit] = useState('2'); // max limit of room (ONLY FOR ADMIN)
     const [showUsernameError, SetShowUsernameError] = useState(false);
     const [showHashError, SetShowHashError] = useState(false);
     const [showRoomLimitError, SetShowRoomLimitError] = useState(false);
     const [showCopyHashSuccess, SetShowCopyHashSuccess] = useState(false);
-    const [shivamMsg, SetShivamMsg] = useState(true)
-    const [mapIDName, SetMapIDName] = useState({})
+    const [shivamMsg, SetShivamMsg] = useState(true); // SHIVAM KUMAR'S MESSAGE TO USERS
+    const [mapIDName, SetMapIDName] = useState({}); // mpas socket.id to a name 
 
     useEffect(() => {
-        SetShowHashError(false)
-    }, [showHashError])
-
-    useEffect(() => {
-        SetShowUsernameError(false)
-    }, [showUsernameError])
-
-    useEffect(() => {
-        SetShowRoomLimitError(false)
-    }, [showRoomLimitError])
-
-    useEffect(() => {
-        SetShowCopyHashSuccess(false)
-    }, [showCopyHashSuccess])
-
-    // helps to join the room using socket.io by emitting our unique hash
-    const joinRoom = (e) => {
-        e.preventDefault()
-        SetShowUsernameError(false);
         SetShowHashError(false);
+    }, [showHashError]);
+
+    useEffect(() => {
+        SetShowUsernameError(false);
+    }, [showUsernameError]);
+
+    useEffect(() => {
         SetShowRoomLimitError(false);
-        SetShowCopyHashSuccess(false)
+    }, [showRoomLimitError]);
+
+    useEffect(() => {
+        SetShowCopyHashSuccess(false);
+    }, [showCopyHashSuccess]);
+
+    const joinRoom = (e) => {
+        e.preventDefault();
         const limit = parseInt(roomLimit);
         if (name === "") {
             SetShowUsernameError(true);
-        } if (hash === "") {
+        } else if (hash === "") {
             SetShowHashError(true);
-        } if (isAdmin && (limit < 2 || limit > 100)) {
+        } else if (isAdmin && (limit < 2 || limit > 100)) {
             SetShowRoomLimitError(true);
         } if(isAdmin && (name !== "" && hash !== "" && limit >= 2 && limit <= 100)) {
-            console.log(`socket.id as an admin: ${socket.id}`)
-            mapIDName[socket.id] = name
+            mapIDName[socket.id] = name;
             socket.emit("join_room_admin", hash, name, limit);
             SetShowChat(true);
         } else if(!isAdmin && (name !== "" && hash !== "")){
-            console.log(`socket.id as a user: ${socket.id}`)
-            mapIDName[socket.id] = name
+            mapIDName[socket.id] = name;
             socket.emit("join_room_user", hash, name);
             SetShowChat(true);
         }
@@ -75,7 +66,7 @@ function Login() {
         if (inputValue >= 2 && inputValue <= 100) {
             SetRoomLimit(inputValue);
         } else {
-            SetRoomLimit('-1');
+            SetRoomLimit('2');
             SetShowRoomLimitError(true);
             <ToastError 
                 message="Please enter a number between 2 and 100" 
@@ -84,22 +75,20 @@ function Login() {
         }
     };
 
-    // creates hash and sets it 
     const handleHash = (e) => {
         e.preventDefault();
         const str = require('randomstring').generate({
             length: 100,
-            charset: 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890`~!@#$%^&*()-=_+{}[]:;",<.>?/|',
+            charset: process.env.REACT_APP_SECRET_KEY
         });
         SetHash(str);
-        SetShowCopy(true) 
-        setIsAdmin(true); // Set admin status
-        SetShowCopyHashSuccess(true)
+        SetShowCopy(true);
+        SetIsAdmin(true); 
+        SetShowCopyHashSuccess(true);
     };
 
-    // helps in copying the hash value generated by the system
-    const copyHash = (e) => {
-        e.preventDefault()
+    const CopyHash = (e) => {
+        e.preventDefault();
         const copyText = document.getElementById('hash-input');
         copyText.select();
         document.execCommand('copy');
@@ -107,61 +96,56 @@ function Login() {
 
     const HandleTokenChange = (e) => {
         SetHash(e.target.value);
-        setIsAdmin(false)
-    }
+        SetIsAdmin(false);
+    };
 
     useEffect(() => {
-        SetShivamMsg(false)
-    },[shivamMsg])
+        SetShivamMsg(false);
+    },[shivamMsg]);
 
     return (
         <div>
-                {
-                    !showChat &&
-                    <div>
-                        <h1>Chat App</h1>
-                    </div>
-                }
-                <ToastContainer />
-                {
-                    shivamMsg && 
-                    toast.info("In Security Token field Either Generate a Token or Copy Paste Someone's Generated Token ONLY.", {
-                        position: "top-center",
-                        autoClose: 7000,
-                        hideProgressBar: false,
-                        closeOnClick: false,
-                        pauseOnHover: true,
-                        draggable: true,
-                        progress: undefined,
-                        theme: "light",
-                        })
-                }
-                {showUsernameError && (
+            <ToastContainer />
+            {
+                shivamMsg && 
+                toast.info("In Security Token field Either Generate a Token or Copy Paste Someone's Generated Token ONLY.", {
+                    position: "top-center",
+                    autoClose: 7000,
+                    hideProgressBar: false,
+                    closeOnClick: false,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "light",
+                    })
+            }
+            {showUsernameError && (
+            <ToastError 
+                message="Please enter a Username" 
+                time={3000}
+                />
+            )}
+            {showHashError && (
                 <ToastError 
-                    message="Please enter a Username" 
+                    message="Please Generate a Token" 
                     time={3000}
                     />
-                )}
-                {showHashError && (
-                    <ToastError 
-                        message="Please Generate a Token" 
-                        time={3000}
-                        />
-                )}
-                {showRoomLimitError && (
-                    <ToastError 
-                        message="Please enter a number between 2 and 100" 
-                        time={3000}
-                    />
-                )}
-                {showCopyHashSuccess && (
-                    <ToastSuccess
-                        message="make sure to copy the token" 
-                        time={3000}
-                    />
-                )}
-                { 
+            )}
+            {showRoomLimitError && (
+                <ToastError 
+                    message="Please enter a number between 2 and 100" 
+                    time={3000}
+                />
+            )}
+            {showCopyHashSuccess && (
+                <ToastSuccess
+                    message="make sure to copy the token" 
+                    time={3000}
+                />
+            )}
+            { 
                 !showChat &&
+                <div><h1>Chat App</h1></div> && 
                 <div className="login-box">
                     <form>
                         <div className="user-box">
@@ -178,8 +162,7 @@ function Login() {
                             <div className="user-box">
                                 <input
                                     type="number"
-                                    // value={roomLimit}
-                                    placeholder="Max People in room [2, 100]"
+                                    placeholder="Max People in room, default is 2"
                                     required
                                     onChange={handleRoomLimitChange}
                                 />
@@ -192,13 +175,12 @@ function Login() {
                                 value={hash}
                                 placeholder="Security Token (CONFIDENTIAL)"
                                 onChange={HandleTokenChange}
-                                // onChange={HandleSetHash}
                                 required
                             />
                             {
                                 showCopy && 
-                                <button onClick={copyHash} className="copy-button">
-                                    Copy Token<FaCopy /> {/* Copy icon */}
+                                <button onClick={CopyHash} className="copy-button">
+                                    Copy Token<FaCopy />
                                 </button>
                             }
                         </div>
@@ -216,7 +198,7 @@ function Login() {
                         <div>Epitome of Secure Chat Application :)</div>
                     </h4>
                 </div>
-            }
+            }   
             {
                 showChat &&
                 <Chat
@@ -228,7 +210,7 @@ function Login() {
                     mapIDName={mapIDName}
                 />
             }
-        </div>
+    </div>
     );
 }
 
