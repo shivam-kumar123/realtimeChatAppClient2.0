@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { ToastContainer, toast} from 'react-toastify';
+import { WhatsappShareButton, WhatsappIcon } from 'react-share';
 import 'react-toastify/dist/ReactToastify.css';
 import io from "socket.io-client";
 import { FaCopy } from 'react-icons/fa';
@@ -139,8 +140,8 @@ function Login() {
             )}
             {showCopyHashSuccess && (
                 <ToastSuccess
-                    message="make sure to copy the token" 
-                    time={3000}
+                    message="make sure to Share the TOKEN on Whatsapp" 
+                    time={6000}
                 />
             )}
             { 
@@ -193,10 +194,16 @@ function Login() {
                             </button>
                         </center>
                     </form>
-                    <h4>
-                        Made with Love by Shivam Kumar
-                        <div>Epitome of Secure Chat Application :)</div>
-                    </h4>
+                    <br />
+                    {
+                        showCopy && 
+                        <div className='icon-container'>
+                            <WhatsappShareButton url={String(hash)} quote={'TOKEN'}>
+                                <WhatsappIcon size={40} round={true} />
+                            </WhatsappShareButton>
+                            <h4>Share Token on Whatsapp</h4>
+                        </div>
+                    }
                 </div>
             }   
             {

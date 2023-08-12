@@ -4,7 +4,7 @@ import './Chat.css';
 
 function Chat({socket, name, hash, isAdmin, SetMapIDName, mapIDName}) {
 
-    const [aboutHash, SetAboutHash] = useState("Hash is your top secret...");
+    const [aboutHash, SetAboutHash] = useState("Token is your top secret...");
     const [displayButton, SetDisplayButton] = useState('more');
     const [currentMessage, SetCurrentMessage] = useState('');
     const [messageList, SetMessageList] = useState([]);
@@ -153,11 +153,11 @@ const SendFile = async (e) => {
 
       
     const HandleAboutHash = () => {
-        if(aboutHash === "Hash is your top secret..."){
-          SetAboutHash("Hash is your top secret, share it with people you know to connect with them, its a super secure key , you can chat with friends only if you both are on same hash");
+        if(aboutHash === "Token is your top secret..."){
+          SetAboutHash("Token is your top secret, share it with people you know to connect with them, its a super secure key , you can chat with friends only if you are in room with same Token");
           SetDisplayButton('less');
         } else {
-          SetAboutHash(aboutHash.substr(0,23) + "...");
+          SetAboutHash(aboutHash.substr(0,24) + "...");
           SetDisplayButton('more');
         }
     }
@@ -216,7 +216,7 @@ return (
               Read {displayButton}
           </button>
           <button onClick={CopyHashToClipboard} className="copy-button">
-              Copy Hash
+              Copy Token
           </button>
           {isInRoom && <button onClick={HandleLeaveRoom}>Leave Room</button>}
       </div>
