@@ -12,6 +12,7 @@ function Chat({socket, name, hash, isAdmin, SetMapIDName, mapIDName}) {
     const [userCount, SetUserCount] = useState(0);
     const [roomPeopleNames, SetRoomPeopleNames] = useState([]);
     const [selectedFile, SetSelectedFile] = useState(null);
+    const [fileInputText, setFileInputText] = useState('No file selected');
     const [receivedFiles, SetReceivedFiles] = useState([]); // for images transfer less than 1 mb
     const [isInRoom, SetIsInRoom] = useState(true); // Track if the user is currently in the room
 
@@ -97,7 +98,7 @@ function Chat({socket, name, hash, isAdmin, SetMapIDName, mapIDName}) {
     };
     
 
-  const handleFileSelect = (e) => {
+  const HandleFileSelect = (e) => {
 
     const selectedFile = e.target.files[0];
 
@@ -113,6 +114,7 @@ function Chat({socket, name, hash, isAdmin, SetMapIDName, mapIDName}) {
         });
       };
       fileReader.readAsArrayBuffer(selectedFile);
+      setFileInputText(selectedFile.name);
     }
     e.target.value = null;
   };
@@ -130,6 +132,10 @@ const SendFile = async (e) => {
   }
 };
 
+  const HandleReceivedFileCancel = (fileData) => {
+    SetReceivedFiles((prevFiles) => prevFiles.filter((file) => file !== fileData));
+  };
+
     const HandleReceivedFileClick = (fileData) => {
       const blob = new Blob([fileData.data], { type: fileData.fileType }); 
       const downloadLink = document.createElement("a");
@@ -139,7 +145,7 @@ const SendFile = async (e) => {
       SetReceivedFiles((prevFiles) => prevFiles.filter((file) => file !== fileData));
     };
 
-    const copyHashToClipboard = () => {
+    const CopyHashToClipboard = () => {
       // Use the Clipboard API to copy the hash value to the clipboard
       navigator.clipboard.writeText(hash);
     };
@@ -156,7 +162,7 @@ const SendFile = async (e) => {
         }
     }
 
-    const sendMessage = async (e) => {
+    const SendMessage = async (e) => {
         e.preventDefault();
         if (currentMessage !== "") {
             const messageData = {
@@ -209,7 +215,7 @@ return (
           <button onClick={HandleAboutHash} className="copy-button">
               Read {displayButton}
           </button>
-          <button onClick={copyHashToClipboard} className="copy-button">
+          <button onClick={CopyHashToClipboard} className="copy-button">
               Copy Hash
           </button>
           {isInRoom && <button onClick={HandleLeaveRoom}>Leave Room</button>}
@@ -231,11 +237,12 @@ return (
                   <div key={index}>
                   <p>Received File: {fileData.fileName}</p>
                   <button onClick={() => HandleReceivedFileClick(fileData)}>Download</button>
+                  <button onClick={() => HandleReceivedFileCancel(fileData)}>Cancel</button>
                   </div>
               ))}
               </ScrollToBottom>
           </div>
-          <form onSubmit={sendMessage}>
+          <form onSubmit={SendMessage}>
               <div className="chat-footer">
               <input
                   type="text"
@@ -245,13 +252,14 @@ return (
                   SetCurrentMessage(e.target.value);
                   }}
               />
-              <button onClick={sendMessage}>&#9658;</button>
+              <button onClick={SendMessage}>&#9658;</button>
               </div>
               <span>
               <input 
                   type="file" 
-                  accept=".txt,.png,.jpg,.jpeg,.pdf,.pptx,.doc,.zip" 
-                  onChange={handleFileSelect} />
+                  // accept=".txt,.png,.jpg,.jpeg,.pdf,.pptx,.doc,.zip" 
+                  style={{ display: {fileInputText} }}
+                  onChange={HandleFileSelect} />
               <button onClick={SendFile}>Send File</button>
               </span>
           </form>
