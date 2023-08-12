@@ -110,7 +110,7 @@ function Login() {
                 shivamMsg && 
                 toast.info("In Security Token field Either Generate a Token or Copy Paste Someone's Generated Token ONLY.", {
                     position: "top-center",
-                    autoClose: 7000,
+                    autoClose: 30000,
                     hideProgressBar: false,
                     closeOnClick: false,
                     pauseOnHover: true,
