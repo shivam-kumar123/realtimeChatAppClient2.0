@@ -41,4 +41,4 @@ Contributions are welcome! Please fork the repository and create a pull request.
 # BSD 3-Clause "New" or "Revised" License
 
 # IMPORTANT
-make sure to add a Star to this repo, would mean a lot.
+Please consider showing your support by giving this repository a star. Your gesture would be greatly appreciated :)
