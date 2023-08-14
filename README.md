@@ -39,3 +39,6 @@ Your app is ready to be deployed!
 Contributions are welcome! Please fork the repository and create a pull request.
 
 # BSD 3-Clause "New" or "Revised" License
+
+# IMPORTANT
+make sure to add a Star to this repo, would mean a lot.
