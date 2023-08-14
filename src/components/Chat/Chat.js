@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import ScrollToBottom from "react-scroll-to-bottom";
 import './Chat.css';
 
-function Chat({socket, name, hash, isAdmin, SetMapIDName, mapIDName}) {
+function Chat({socket, name, hash, isAdmin, SetMapIDName, mapIDName, roomLimit}) {
 
     const [aboutHash, SetAboutHash] = useState("Token is your top secret...");
     const [displayButton, SetDisplayButton] = useState('more');
@@ -18,12 +18,10 @@ function Chat({socket, name, hash, isAdmin, SetMapIDName, mapIDName}) {
 
     useEffect(() => {
       socket.on("room_names", (name) => {
-          SetRoomPeopleNames([name]) //sending all names of people in room
+        const names = [...name];
+          SetRoomPeopleNames(names) //sending all names of people in room
+          SetUserCount(names.length);
       })
-    
-        socket.on("room_count", (count) => {
-            SetUserCount(count);
-        });
     
         socket.on("receive_message", (data) => {
           SetMessageList((list) => {
@@ -52,7 +50,6 @@ function Chat({socket, name, hash, isAdmin, SetMapIDName, mapIDName}) {
 
       useEffect(() => {
         socket.on("join_user_msg", (name) => {
-          console.log(`in chat.js name: ${name}`);
           const msg = name + " has joined the chat";
           const messageData = {
             id: yourID,
@@ -113,7 +110,7 @@ function Chat({socket, name, hash, isAdmin, SetMapIDName, mapIDName}) {
       };
       await socket.emit("send_message", messageData);
       SetMessageList((list) => [...list, messageData]);
-      socket.emit("leave_room", hash);
+      socket.emit("leave_room", hash, leftUserName);
       window.location.reload();
     };
     
@@ -223,7 +220,13 @@ const SendFile = async (e) => {
 
 return (
   <div>
-      {name} {isAdmin ? "an admin" : "a user"}
+      {name} {isAdmin ? "an admin " : "a user "} 
+      {
+        isAdmin && 
+        <div>
+          Room limit: {roomLimit}
+        </div>
+      }
       <div>
           <h5>
               ROOM ID / Hash (CONFIDENTIAL)
@@ -245,9 +248,13 @@ return (
           <div>
               <span>People in Room ({userCount}) : </span>
               {roomPeopleNames.map((name, index) => (
-                  <span key={index}>{`${name} `}</span>
+                  <span key={index}>{`${name}, `}</span>
               ))}
           </div>
+      }
+      {
+        !isAdmin && 
+        <span>People in Room - ({userCount})</span>
       }
       <div className="chat-window">
           <div className="chat-body">

@@ -9,7 +9,7 @@ import ToastError from '../Toaster/ToastError.js';
 import ToastSuccess from '../Toaster/ToastSuccess.js';
 import './Login.css';
 
-const socket = io.connect(process.env.REACT_APP_HOSTED_SERVER_LOCAL);
+const socket = io.connect(process.env.REACT_APP_HOSTED_SERVER);
 
 function Login() {
     const [name, SetName] = useState(''); // Username 
@@ -215,6 +215,7 @@ function Login() {
                     isAdmin={isAdmin}
                     SetMapIDName={SetMapIDName}
                     mapIDName={mapIDName}
+                    roomLimit={roomLimit}
                 />
             }
     </div>
