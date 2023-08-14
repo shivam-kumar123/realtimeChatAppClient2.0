@@ -35,10 +35,10 @@ It correctly bundles React in production mode and optimizes the build for the be
 The build is minified and the filenames include the hashes.\
 Your app is ready to be deployed!
 
-# Contributing
+## Contributing
 Contributions are welcome! Please fork the repository and create a pull request.
 
-# BSD 3-Clause "New" or "Revised" License
+## BSD 3-Clause "New" or "Revised" License
 
-# IMPORTANT
+## IMPORTANT
 Please consider showing your support by giving this repository a star. Your gesture would be greatly appreciated :)
