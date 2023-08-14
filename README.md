@@ -8,7 +8,7 @@ Welcome to ChatAppClient, a real-time chat application that allows users to shar
 ## Features
 
 - Real-time messaging
-- Picture and PDF sharing (up to 10 MB)
+- Picture and PDF sharing (up to 10 - 15 MB)
 - Responsive design
 - [Live Demo](https://chatappclient2-0.onrender.com/)
 
