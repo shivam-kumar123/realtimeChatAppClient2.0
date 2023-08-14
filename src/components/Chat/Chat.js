@@ -48,7 +48,26 @@ function Chat({socket, name, hash, isAdmin, SetMapIDName, mapIDName}) {
             SetYourID(socket.id);
           });
         }
-      }, [socket, userCount]);
+      }, [socket, userCount, hash, yourID]);
+
+      useEffect(() => {
+        socket.on("join_user_msg", (name) => {
+          console.log(`in chat.js name: ${name}`);
+          const msg = name + " has joined the chat";
+          const messageData = {
+            id: yourID,
+            room: hash, 
+            author: "ChatBot",
+            message: msg,
+            time:
+            new Date(Date.now()).getHours() +
+            ":" +
+            new Date(Date.now()).getMinutes(),
+          };
+          // await socket.emit("send_message", messageData);
+          SetMessageList((list) => [...list, messageData]);
+        })
+      },[socket, hash, yourID]);
 
       useEffect(() => {
         socket.on("user_left", (leftName) => {
@@ -95,6 +114,7 @@ function Chat({socket, name, hash, isAdmin, SetMapIDName, mapIDName}) {
       await socket.emit("send_message", messageData);
       SetMessageList((list) => [...list, messageData]);
       socket.emit("leave_room", hash);
+      window.location.reload();
     };
     
 
